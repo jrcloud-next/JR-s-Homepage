@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JR's Translate Tool</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="bg-ambient"></div>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-overlay hidden" id="loginOverlay">
+  <div class="login-card">
+    <img class="login-avatar" src="http://jrofficial.cn/jr.jpg" alt="avatar" crossorigin="anonymous">
+    <h1>JR's Translate Tool</h1>
+    <p>请输入密码以继续</p>
+    <input type="password" class="login-input" id="loginInput" placeholder="密码" autocomplete="off">
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn">验证</button>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast"></div>
+
+<!-- ============ MAIN APP ============ -->
+<div class="app" id="app" style="display:none;"
+     data-id="cuSeEOqB6sypNbUIwXn0BnKydu9r4zoX"
+     data-ver="MtE1lCfJmKyv2YTpVr0Klz4J+65kI26k"
+     data-src="fRxlx5eJoHVTa/aCPg3KR7+ojFlzuLiM"
+     data-tag="PWQTQL7gO0mzvDSTtgQ6dwSdi6vRF4Lm">
+  <!-- Header -->
+  <div class="header">
+    <img class="header-avatar" src="http://jrofficial.cn/jr.jpg" alt="avatar" crossorigin="anonymous">
+    <div class="header-info">
+      <h2>JR's Translate Tool</h2>
+      <span>Chinese ↔ English · Auto Detect</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="clearHistoryBtn" title="清空历史">🗑</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="card">
+    <div class="lang-indicator">
+      <span class="lang-tag" id="sourceLang">自动检测</span>
+      <span class="lang-arrow">→</span>
+      <span class="lang-tag" id="targetLang">翻译中</span>
+    </div>
+    <textarea class="input-area" id="inputArea" placeholder="输入要翻译的文字…" rows="4" data-ref="qkR4Vx+YYtORGbHOn55TePolouO9uo1B"></textarea>
+    <div class="btn-row">
+      <button class="translate-btn" id="translateBtn">
+        <span class="btn-text">翻译</span>
+        <span class="spinner"></span>
+      </button>
+      <button class="clear-btn" id="clearInputBtn">清空</button>
+      <span class="char-count" id="charCount">0 字</span>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="card">
+    <div class="output-area" id="outputArea"></div>
+    <div class="copy-row">
+      <button class="copy-btn" id="copyBtn" style="display:none;">复制</button>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <div class="history-header">
+      <h3>历史记录</h3>
+      <span style="font-size:12px;color:var(--text-secondary);" id="historyCount">0 条</span>
+    </div>
+    <ul class="history-list" id="historyList"></ul>
+    <div class="no-history" id="noHistory">暂无翻译记录</div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
