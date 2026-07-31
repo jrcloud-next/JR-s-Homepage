@@ -88,8 +88,8 @@
 
     function getBingWallpaperUrl() {
         return mobileDevicePattern.test(navigator.userAgent)
-            ? "https://bing.img.run/m.php"
-            : "https://bing.img.run/1920x1080.php";
+            ? "https://bing.biturl.top/?resolution=1080&format=image&index=0&mkt=zh-CN"
+            : "https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN";
     }
 
     function applyFallbackBackground() {
