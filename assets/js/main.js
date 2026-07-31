@@ -88,7 +88,7 @@
 
     function getBingWallpaperUrl() {
         return mobileDevicePattern.test(navigator.userAgent)
-            ? "https://bing.biturl.top/?resolution=1080&format=image&index=0&mkt=zh-CN"
+            ? "https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN"
             : "https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN";
     }
 
