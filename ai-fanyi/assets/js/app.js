@@ -49,7 +49,7 @@ const _xc = _b("m/ypr4n0c8MPRbEMDV74BeDLr1M0XCLk5OLOIENdx3XxVBlwg1ta8YMCdfuBq5z4
 const _xc2 = "hdsgaE+h5Ew9sitJO08GJmBXlFWv11ZC6gI43EEvvKZhgzojkbtp6sd6cKak9jQb2c2/cYnYvdI=";
 const _xc3 = "c6lHhJ6edTvh9oNlcPWx9gQ3+AJ79ThYVWKiWi+J9mgLl9NAryJYqxl94B0QlMvkfqNig2OcNMw=";
 
-const _skc = 'ai_fanyi_v1';
+const _skc = 'ai_fanyi_v2';
 const STORAGE_KEY_HISTORY = 'ai_fanyi_history';
 
 
