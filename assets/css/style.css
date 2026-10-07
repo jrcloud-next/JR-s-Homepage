@@ -387,8 +387,9 @@ body.is-ready .social-link {
     }
 }
 
-/* Landscape phones and short windows keep the same layout with less height. */
-@media (min-width: 600px) and (max-height: 540px) and (min-aspect-ratio: 1/1) {
+/* Short and narrow landscape windows share a compact two-column layout. */
+@media (min-width: 600px) and (max-height: 540px) and (min-aspect-ratio: 1/1),
+    (min-width: 600px) and (max-width: 759px) and (min-aspect-ratio: 1/1) {
     .container {
         width: min(1080px, 100%);
         grid-template-columns: minmax(120px, 0.65fr) minmax(0, 2fr);
@@ -445,6 +446,15 @@ body.is-ready .social-link {
     .footer {
         padding-top: 12px;
         font-size: 0.8rem;
+    }
+}
+
+/* Keep every compact button aligned when horizontal space is limited. */
+@media (min-width: 600px) and (max-width: 759px) and (min-aspect-ratio: 1/1) {
+    .social-link {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 6px;
     }
 }
 
