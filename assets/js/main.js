@@ -216,7 +216,7 @@
                         [_mk]: _mdl,
                         reasoning_effort: "none",
                         messages: [
-                            { role: "system", content: "只输出两行五月天或周杰伦的歌词，换行分隔，尽量不要重复，不要解释。" },
+                            { role: "system", content: "只输出五月天或周杰伦同首歌连续两句歌词正文，一句一行，不加标题、歌名、歌手信息或解释。" },
                             { role: "user", content: "1" }
                         ],
                         max_tokens: 500,
