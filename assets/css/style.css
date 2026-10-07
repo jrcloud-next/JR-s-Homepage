@@ -20,6 +20,7 @@
 body {
     font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,7 +28,10 @@ body {
     background: radial-gradient(circle at top right, #22375a 0%, #0b1323 58%, #050810 100%);
     overflow-x: hidden;
     position: relative;
-    padding: 28px 16px;
+    padding: max(clamp(12px, 3vh, 36px), env(safe-area-inset-top))
+        max(clamp(12px, 3vw, 36px), env(safe-area-inset-right))
+        max(clamp(12px, 3vh, 36px), env(safe-area-inset-bottom))
+        max(clamp(12px, 3vw, 36px), env(safe-area-inset-left));
 }
 
 body::before,
@@ -67,11 +71,15 @@ body::after {
 }
 
 .container {
-    width: min(920px, 100%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(20px, 3vh, 32px);
+    width: min(620px, 100%);
+    min-width: 0;
     text-align: center;
-    padding: 46px 30px 34px;
+    padding: clamp(24px, 4vw, 40px);
     background: var(--card-bg);
-    border-radius: 26px;
+    border-radius: clamp(18px, 3vw, 26px);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: var(--card-shadow);
@@ -98,16 +106,38 @@ body.is-ready .container {
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.52), transparent);
 }
 
+.profile,
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.profile {
+    gap: 18px;
+}
+
+.content {
+    gap: 14px;
+}
+
+.content > * {
+    max-width: 100%;
+}
+
 .badge-row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: fit-content;
-    margin: 0 auto 24px;
+    max-width: 100%;
     padding: 8px 16px;
     border-radius: 999px;
     font-size: 0.92rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
     color: var(--text-soft);
     border: 1px solid rgba(185, 218, 255, 0.28);
     background: rgba(144, 190, 255, 0.1);
@@ -116,6 +146,7 @@ body.is-ready .container {
 .status-dot {
     width: 10px;
     height: 10px;
+    flex-shrink: 0;
     border-radius: 50%;
     background: #73ffb2;
     box-shadow: 0 0 10px rgba(115, 255, 178, 0.9);
@@ -123,13 +154,15 @@ body.is-ready .container {
 }
 
 .avatar-container {
-    display: inline-block;
-    margin-bottom: 20px;
+    width: clamp(112px, 22vw, 160px);
+    max-width: 100%;
 }
 
 .avatar {
-    width: 165px;
-    height: 165px;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
     border-radius: 50%;
     object-fit: cover;
     border: 4px solid rgba(255, 255, 255, 0.3);
@@ -143,16 +176,14 @@ body.is-ready .container {
 }
 
 .tagline {
-    font-size: clamp(1.15rem, 3.8vw, 1.78rem);
+    width: 100%;
+    min-height: 3.2em;
+    font-size: clamp(1.1rem, 2.3vw, 1.7rem);
     letter-spacing: 1px;
     line-height: 1.6;
     color: var(--text-soft);
     max-width: 680px;
-    margin: 0 auto;
-}
-
-.quote-text {
-    margin-bottom: 10px;
+    overflow-wrap: anywhere;
 }
 
 .quote-line {
@@ -218,19 +249,20 @@ body.is-ready .quote-text:not(.quote-loading) .quote-line:nth-child(2) {
 }
 
 .clock {
-    margin: 8px auto 0;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: clamp(0.78rem, 1.3vw, 0.95rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.6;
     letter-spacing: 0.6px;
+    overflow-wrap: anywhere;
 }
 
 .social-links {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    max-width: 600px;
-    margin: 34px auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
 }
 
 .social-link {
@@ -241,15 +273,15 @@ body.is-ready .quote-text:not(.quote-loading) .quote-line:nth-child(2) {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: 126px;
-    min-height: 112px;
+    gap: 8px;
+    min-width: 0;
+    min-height: 92px;
+    padding: 14px 10px;
     border-radius: 16px;
     border: 1px solid rgba(181, 214, 255, 0.2);
     background: linear-gradient(155deg, var(--link-bg), rgba(120, 156, 214, 0.05));
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
     opacity: 0;
-    transform: translateY(18px);
 }
 
 body.is-ready .social-link {
@@ -264,19 +296,27 @@ body.is-ready .social-link {
     box-shadow: 0 12px 22px rgba(0, 0, 0, 0.24);
 }
 
+.social-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-color: var(--accent);
+}
+
 .social-icon {
-    font-size: 2rem;
+    flex-shrink: 0;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .social-name {
     font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: 0.2px;
+    overflow-wrap: anywhere;
 }
 
 .footer {
-    margin-top: 34px;
-    padding-top: 20px;
+    grid-column: 1 / -1;
+    padding-top: 18px;
     border-top: 1px solid rgba(205, 229, 255, 0.18);
     color: var(--text-muted);
     font-size: 0.92rem;
@@ -303,12 +343,10 @@ body.is-ready .social-link {
 @keyframes rise-in {
     from {
         opacity: 0;
-        transform: translateY(18px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -326,33 +364,121 @@ body.is-ready .social-link {
     }
 }
 
-@media (max-width: 900px) {
+/* Four equal links avoid an unbalanced three-plus-one row. */
+@media (min-width: 520px) {
     .social-links {
-        max-width: 520px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 620px) {
+/* Wide windows use their horizontal space for profile and content columns. */
+@media (min-width: 760px) and (min-aspect-ratio: 1/1) {
     .container {
-        padding: 36px 20px 28px;
+        width: min(1080px, 100%);
+        grid-template-columns: minmax(168px, 0.75fr) minmax(0, 2fr);
+        column-gap: clamp(24px, 4vw, 48px);
+        align-items: center;
+        padding: clamp(24px, 3.5vw, 48px);
     }
 
-    .avatar {
-        width: 140px;
-        height: 140px;
+    .profile {
+        padding-right: clamp(18px, 2.5vw, 32px);
+        border-right: 1px solid rgba(205, 229, 255, 0.18);
+    }
+}
+
+/* Landscape phones and short windows keep the same layout with less height. */
+@media (min-width: 600px) and (max-height: 540px) and (min-aspect-ratio: 1/1) {
+    .container {
+        width: min(1080px, 100%);
+        grid-template-columns: minmax(120px, 0.65fr) minmax(0, 2fr);
+        gap: 16px clamp(16px, 3vw, 32px);
+        align-items: center;
+        padding: clamp(16px, 2.5vw, 24px);
+    }
+
+    .profile {
+        gap: 12px;
+        padding-right: clamp(12px, 2vw, 24px);
+        border-right: 1px solid rgba(205, 229, 255, 0.18);
+    }
+
+    .avatar-container {
+        width: clamp(76px, 22vh, 112px);
+    }
+
+    .badge-row {
+        gap: 8px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+    }
+
+    .content {
+        gap: 10px;
+    }
+
+    .tagline {
+        font-size: clamp(1rem, 2vw, 1.4rem);
+    }
+
+    .social-links {
+        gap: 10px;
+        margin-top: 2px;
     }
 
     .social-link {
-        width: 108px;
-        min-height: 96px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        min-height: 58px;
+        padding: 10px 8px;
+        border-radius: 12px;
     }
 
     .social-icon {
-        font-size: 1.75rem;
+        font-size: 1.4rem;
     }
 
     .social-name {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
+    }
+
+    .footer {
+        padding-top: 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Compress narrow, short windows without fixing or clipping their height. */
+@media (max-width: 599px) and (max-height: 620px) {
+    .container {
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .profile {
+        gap: 12px;
+    }
+
+    .avatar-container {
+        width: 96px;
+    }
+
+    .badge-row {
+        padding: 6px 12px;
+        font-size: 0.82rem;
+    }
+
+    .content {
+        gap: 10px;
+    }
+
+    .social-link {
+        min-height: 76px;
+        padding: 10px;
+    }
+
+    .footer {
+        padding-top: 12px;
     }
 }
 
