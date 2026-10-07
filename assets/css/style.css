@@ -492,6 +492,13 @@ body.is-ready .social-link {
     }
 }
 
+/* Extra-wide windows place the copyright below the divider at the right. */
+@media (min-aspect-ratio: 2/1) {
+    .footer {
+        text-align: right;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
