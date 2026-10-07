@@ -385,6 +385,10 @@ body.is-ready .social-link {
         padding-right: clamp(18px, 2.5vw, 32px);
         border-right: 1px solid rgba(205, 229, 255, 0.18);
     }
+
+    .footer {
+        text-align: right;
+    }
 }
 
 /* Short and narrow landscape windows share a compact two-column layout. */
@@ -446,6 +450,7 @@ body.is-ready .social-link {
     .footer {
         padding-top: 12px;
         font-size: 0.8rem;
+        text-align: right;
     }
 }
 
@@ -489,13 +494,6 @@ body.is-ready .social-link {
 
     .footer {
         padding-top: 12px;
-    }
-}
-
-/* Extra-wide windows place the copyright below the divider at the right. */
-@media (min-aspect-ratio: 2/1) {
-    .footer {
-        text-align: right;
     }
 }
 
