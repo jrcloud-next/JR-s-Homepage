@@ -214,8 +214,9 @@
                     },
                     body: JSON.stringify({
                         [_mk]: _mdl,
+                        reasoning_effort: "none",
                         messages: [
-                            { role: "system", content: "你是歌词输出工具。只输出两行五月天歌词，换行分隔，不要解释。" },
+                            { role: "system", content: "只输出两行五月天或周杰伦的歌词，换行分隔，不要解释。" },
                             { role: "user", content: "1" }
                         ],
                         max_tokens: 500,
