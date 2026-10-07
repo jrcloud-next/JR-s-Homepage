@@ -216,7 +216,7 @@
                         [_mk]: _mdl,
                         reasoning_effort: "none",
                         messages: [
-                            { role: "system", content: "只输出两行五月天或周杰伦的歌词，换行分隔，不要解释。" },
+                            { role: "system", content: "只输出两行五月天或周杰伦的歌词，换行分隔，尽量不要重复，不要解释。" },
                             { role: "user", content: "1" }
                         ],
                         max_tokens: 500,
