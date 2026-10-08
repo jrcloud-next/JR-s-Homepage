@@ -47,7 +47,7 @@ body::before {
     height: 520px;
     top: -220px;
     right: -130px;
-    background: radial-gradient(circle, rgba(125, 201, 255, 0.3), rgba(125, 201, 255, 0));
+    background: radial-gradient(circle closest-side, rgba(125, 201, 255, 0.3), rgba(125, 201, 255, 0));
     filter: blur(8px);
 }
 
@@ -56,7 +56,7 @@ body::after {
     height: 600px;
     left: -220px;
     bottom: -320px;
-    background: radial-gradient(circle, rgba(88, 168, 255, 0.16), rgba(88, 168, 255, 0));
+    background: radial-gradient(circle closest-side, rgba(88, 168, 255, 0.16), rgba(88, 168, 255, 0));
 }
 
 .background {
