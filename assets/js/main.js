@@ -2,12 +2,27 @@
     "use strict";
 
     const background = document.getElementById("background");
+    const mainCard = document.getElementById("main-card");
     const yearElement = document.getElementById("current-year");
     const greetingElement = document.getElementById("greeting-text");
+    const dateElement = document.getElementById("date-text");
     const clockElement = document.getElementById("clock-text");
+    const quoteRefreshBtn = document.getElementById("quote-refresh");
+    const wallpaperToggleBtn = document.getElementById("wallpaper-toggle");
+    const wallpaperRestoreBtn = document.getElementById("wallpaper-restore");
     const socialLinks = document.querySelectorAll(".social-link");
 
     const mobileDevicePattern = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+
+    const FALLBACK_LYRICS = [
+        ["这一生志愿只要平凡快乐", "谁说这样不伟大呢"],
+        ["我和我最后的倔强", "握紧双手绝对不放"],
+        ["最美的不是下雨天", "是曾与你躲过雨的屋檐"],
+        ["风筝有风海豚有海", "我存在在我的存在"],
+        ["天青色等烟雨", "而我在等你"]
+    ];
+    let fallbackIndex = 0;
+    let isFetchingLyrics = false;
 
     function _h() {
         var h = "736b2d613366376338393132" + "64346562366638303931613263" + "336434653566366137";
@@ -99,6 +114,7 @@
 
         background.style.backgroundImage =
             "linear-gradient(140deg, #0a182d 0%, #122646 46%, #203d5e 100%)";
+        background.classList.add("is-loaded");
     }
 
     function setBackgroundImage() {
@@ -110,7 +126,8 @@
         const preloadImage = new Image();
 
         preloadImage.onload = () => {
-            background.style.backgroundImage = `url(${wallpaperUrl})`;
+            background.style.backgroundImage = `url("${wallpaperUrl}")`;
+            background.classList.add("is-loaded");
         };
 
         preloadImage.onerror = () => {
@@ -150,10 +167,6 @@
     }
 
     function updateClock() {
-        if (!clockElement) {
-            return;
-        }
-
         const now = new Date();
         const dateText = now.toLocaleDateString("zh-CN", {
             year: "numeric",
@@ -165,23 +178,45 @@
             hour12: false
         });
 
-        clockElement.textContent = `${dateText} ${timeText}`;
+        if (dateElement) {
+            dateElement.textContent = dateText;
+            if (clockElement) {
+                clockElement.textContent = timeText;
+                clockElement.setAttribute("datetime", now.toISOString());
+            }
+        } else if (clockElement) {
+            clockElement.textContent = `${dateText} ${timeText}`;
+        }
     }
 
-    async function fetchMaydayLyrics() {
+    async function fetchMaydayLyrics(isManualRefresh = false) {
+        if (isFetchingLyrics) return;
+
         var quoteLine1 = document.getElementById("quote-line-1");
         var quoteLine2 = document.getElementById("quote-line-2");
-        var quoteText  = document.getElementById("quote-text");
+        var quoteText = document.getElementById("quote-text");
 
         if (!quoteLine1 || !quoteLine2) return;
 
-        var DEFAULT_1 = "这一生志愿只要平凡快乐";
-        var DEFAULT_2 = "谁说这样不伟大呢";
+        isFetchingLyrics = true;
+        var previousLine = quoteLine1.textContent.trim();
+
+        if (isManualRefresh) {
+            fallbackIndex = (fallbackIndex + 1) % FALLBACK_LYRICS.length;
+            if (quoteRefreshBtn) quoteRefreshBtn.classList.add("is-spinning");
+            if (quoteText) quoteText.classList.add("quote-loading");
+            quoteLine1.textContent = "";
+            quoteLine2.textContent = "";
+        }
+
+        var defaultPair = FALLBACK_LYRICS[fallbackIndex];
 
         function applyLyrics(line1, line2) {
             quoteLine1.textContent = line1;
             quoteLine2.textContent = line2;
             if (quoteText) quoteText.classList.remove("quote-loading");
+            if (quoteRefreshBtn) quoteRefreshBtn.classList.remove("is-spinning");
+            isFetchingLyrics = false;
         }
 
         // 3 秒倒计时：超时则中止请求并兜底
@@ -191,7 +226,7 @@
             if (!lyricsDone) {
                 lyricsDone = true;
                 if (activeController) activeController.abort();
-                applyLyrics(DEFAULT_1, DEFAULT_2);
+                applyLyrics(defaultPair[0], defaultPair[1]);
             }
         }, 3000);
 
@@ -202,7 +237,10 @@
         var _mdl = ""; for (var _mi = 0; _mi < _mh.length; _mi += 2) _mdl += String.fromCharCode(parseInt(_mh.substr(_mi, 2), 16));
         var _mk = ""; for (var _ki = 0; _ki < _kh.length; _ki += 2) _mk += String.fromCharCode(parseInt(_kh.substr(_ki, 2), 16));
 
-        // 重试循环：失败后立即重试，直到超时
+        var userPrompt = isManualRefresh && previousLine
+            ? "换一首，不要出现：" + previousLine
+            : "1";
+
         while (!lyricsDone) {
             try {
                 activeController = new AbortController();
@@ -217,10 +255,10 @@
                         reasoning_effort: "none",
                         messages: [
                             { role: "system", content: "只输出五月天或周杰伦同首歌连续两句歌词正文，一句一行，不加标题、歌名、歌手信息或解释。" },
-                            { role: "user", content: "1" }
+                            { role: "user", content: userPrompt }
                         ],
                         max_tokens: 500,
-                        temperature: 0.7
+                        temperature: isManualRefresh ? 0.85 : 0.7
                     }),
                     signal: activeController.signal
                 });
@@ -241,22 +279,80 @@
                         }
                     }
                 }
-                // response 非 ok → 下一轮重试
             } catch (e) {
-                // 网络错误 / abort → 下一轮重试（除非 lyricsDone 已置位）
+                // 网络错误或中止时等待片刻再重试
+            }
+
+            if (!lyricsDone) {
+                await new Promise(function (resolve) { setTimeout(resolve, 250); });
             }
         }
 
-        // 最终兜底（重试耗尽或超时）
         if (!lyricsDone) {
             lyricsDone = true;
-            applyLyrics(DEFAULT_1, DEFAULT_2);
+            applyLyrics(defaultPair[0], defaultPair[1]);
         }
     }
 
     function animateSocialLinks() {
         socialLinks.forEach((link, index) => {
-            link.style.setProperty("--item-delay", `${index * 90}ms`);
+            link.style.setProperty("--item-delay", `${120 + index * 75}ms`);
+            link.addEventListener("animationend", () => {
+                link.classList.add("is-entered");
+            }, { once: true });
+        });
+    }
+
+    function setupInteractiveSpotlight() {
+        if (!mainCard || !window.matchMedia("(hover: hover)").matches) {
+            return;
+        }
+
+        let rafId = 0;
+        mainCard.addEventListener("pointermove", (event) => {
+            if (rafId) return;
+            const clientX = event.clientX;
+            const clientY = event.clientY;
+            rafId = requestAnimationFrame(() => {
+                const rect = mainCard.getBoundingClientRect();
+                mainCard.style.setProperty("--mx", `${(clientX - rect.left).toFixed(1)}px`);
+                mainCard.style.setProperty("--my", `${(clientY - rect.top).toFixed(1)}px`);
+                rafId = 0;
+            });
+        }, { passive: true });
+    }
+
+    function setWallpaperPeek(active) {
+        document.body.classList.toggle("wallpaper-peek", active);
+        if (wallpaperToggleBtn) {
+            wallpaperToggleBtn.setAttribute("aria-pressed", String(active));
+        }
+    }
+
+    function setupControls() {
+        if (quoteRefreshBtn) {
+            quoteRefreshBtn.addEventListener("click", () => {
+                fetchMaydayLyrics(true);
+            });
+        }
+
+        if (wallpaperToggleBtn) {
+            wallpaperToggleBtn.addEventListener("click", () => {
+                const next = !document.body.classList.contains("wallpaper-peek");
+                setWallpaperPeek(next);
+            });
+        }
+
+        if (wallpaperRestoreBtn) {
+            wallpaperRestoreBtn.addEventListener("click", () => {
+                setWallpaperPeek(false);
+            });
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && document.body.classList.contains("wallpaper-peek")) {
+                setWallpaperPeek(false);
+            }
         });
     }
 
@@ -266,9 +362,12 @@
         updateGreeting();
         updateClock();
         animateSocialLinks();
-        fetchMaydayLyrics();
+        setupInteractiveSpotlight();
+        setupControls();
+        fetchMaydayLyrics(false);
 
         window.setInterval(updateClock, 1000);
+        window.setInterval(updateGreeting, 60000);
 
         requestAnimationFrame(() => {
             document.body.classList.add("is-ready");
